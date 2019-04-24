@@ -1,0 +1,10 @@
+---
+- hosts: all
+  become: yes
+  tasks: 
+    - name: install php 7 and stuff
+      yum: 
+        name: "{{ packages }}"
+      vars:
+        packages: 
+        - php

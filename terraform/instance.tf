@@ -22,6 +22,21 @@ resource "aws_instance" "dotnetcoreapp" {
       "sudo /tmp/script.sh"
     ]
   }
+
+  #############################################################################
+  # This is the 'local exec' method.  
+  # Ansible runs from the same host you run Terraform from
+  #############################################################################
+
+  provisioner "remote-exec" {
+    inline = [
+        "echo 'wasssup'"
+    ]
+  }
+  provisioner "local-exec" {
+    command = "ansible-playbook -i '${self.public_ip},' --private-key ${var.PATH_TO_PRIVATE_KEY} ../ansible/provision.yml"
+  } 
+
   connection {
     user        = "${var.INSTANCE_USERNAME}"
     private_key = "${file("${var.PATH_TO_PRIVATE_KEY}")}"
