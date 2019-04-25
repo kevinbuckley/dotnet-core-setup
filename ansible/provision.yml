@@ -1,10 +1,16 @@
 ---
 - hosts: all
   become: yes
+  remote_user: ubuntu
+  gather_facts: no
+  pre_tasks:
+    - name: 'install python2'
+      apt:
+        name: python 
+        update_cache: yes
   tasks: 
-    - name: install php 7 and stuff
-      yum: 
-        name: "{{ packages }}"
-      vars:
-        packages: 
-        - php
+    - name: install php and stuff
+      apt:
+        name: php
+        update_cache: yes
+      

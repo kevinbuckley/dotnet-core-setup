@@ -12,29 +12,27 @@ resource "aws_instance" "dotnetcoreapp" {
   instance_type = "t2.micro"
   key_name      = "${aws_key_pair.id_rsa.key_name}"
 
-  provisioner "file" {
-    source      = "../ansible/temp.sh"
-    destination = "/tmp/script.sh"
-  }
-  provisioner "remote-exec" {
-    inline = [
-      "chmod +x /tmp/script.sh",
-      "sudo /tmp/script.sh"
-    ]
-  }
-
   #############################################################################
   # This is the 'local exec' method.  
   # Ansible runs from the same host you run Terraform from
   #############################################################################
 
-  provisioner "remote-exec" {
-    inline = [
-        "echo 'wasssup'"
-    ]
-  }
+  #provisioner "remote-exec" {
+  #  inline = [
+  #      "echo 'wasssup'"
+  #  ]
+  #}
+
   provisioner "local-exec" {
-    command = "ansible-playbook -i '${self.public_ip},' --private-key ${var.PATH_TO_PRIVATE_KEY} ../ansible/provision.yml"
+     command = "echo ubuntu@${self.public_ip} > ../ansible/hosts"
+  }
+
+  provisioner "local-exec" {
+     command = "ssh-keyscan ${self.public_ip}"
+  }
+
+  provisioner "local-exec" {
+    command = "ansible-playbook -i ../ansible/hosts --private-key ${var.PATH_TO_PRIVATE_KEY} ../ansible/provision.yml"
   } 
 
   connection {
